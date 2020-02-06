@@ -1,4 +1,11 @@
+FROM ubuntu:bionic as qemu-source
+
+RUN apt-get update
+RUN apt-get -y install qemu-user-static
+
 FROM arm32v7/ubuntu:bionic as builder
+
+COPY --from=qemu-source /usr/bin/qemu-arm-static /usr/bin/qemu-arm-static
 
 # Grab dependencies
 RUN apt-get update
@@ -36,7 +43,8 @@ RUN chmod +x /snap/bin/snapcraft
 
 # Multi-stage build, only need the snaps from the builder. Copy them one at a
 # time so they can be cached.
-FROM ubuntu:xenial
+FROM arm32v7/ubuntu:bionic
+COPY --from=qemu-source /usr/bin/qemu-arm-static /usr/bin/qemu-arm-static
 COPY --from=builder /snap/core /snap/core
 COPY --from=builder /snap/core18 /snap/core18
 COPY --from=builder /snap/snapcraft /snap/snapcraft
