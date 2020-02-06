@@ -36,7 +36,7 @@ RUN chmod +x /snap/bin/snapcraft
 
 # Multi-stage build, only need the snaps from the builder. Copy them one at a
 # time so they can be cached.
-FROM ubuntu:xenial
+FROM i386/ubuntu:bionic
 COPY --from=builder /snap/core /snap/core
 COPY --from=builder /snap/core18 /snap/core18
 COPY --from=builder /snap/snapcraft /snap/snapcraft
